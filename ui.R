@@ -2,7 +2,6 @@ library(shiny)
 library(dplyr)
 library(pxR)
 # 
-data_1 <- read.px("http://www.ine.es/jaxiT3/files/t/es/px/6061.px?nocab=1") %>% as.data.frame()
 
 dateInput2 <- function(inputId, label, minview = "years", maxview = "decades", ...) {
   d <- shiny::dateInput(inputId, label, ...)
