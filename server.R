@@ -1,6 +1,7 @@
 library(pxR)
 library(shiny)
 library(dplyr)
+library(ggplot2)
 data_1 <- read.px("http://www.ine.es/jaxiT3/files/t/es/px/6061.px?nocab=1") %>% as.data.frame()
 
 
@@ -29,6 +30,7 @@ shinyServer(
           aux2 = slice(busqueda, vectorPosFin[i]:vectorPosInicio[i] )
           aux = full_join(aux, aux2)
         }#for
+        aux = select(aux, Periodo, Comunidades.y.Ciudades.Autónomas, value)
         aux
       })#Filtrar
       
@@ -40,8 +42,14 @@ shinyServer(
       Fin <- reactive({
         paste(as.character(format(input$año[2],format="%Y")),input$TF, sep="")
       })
-      
-      output$grafico <-  renderTable({ Filtrar() })# Filtrado de todos los datos
+      output$grafico <- renderPlot({
+        query <- Filtrar()
+        
+        barplot(select(query,Periodo))
+        
+      })#Grafica
+      output$datos <-  renderTable({ Filtrar() 
+        })# Filtrado de todos los datos
       
       output$varSel <- renderText({
         paste("Visualización del ", input$Componentes, "en el sector ", input$Sectores, "Desde el ", Inicio(), "hasta el ", Fin(), 

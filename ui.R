@@ -1,6 +1,7 @@
 library(shiny)
 library(dplyr)
 library(pxR)
+library(ggplot2)
 # 
 
 dateInput2 <- function(inputId, label, minview = "years", maxview = "decades", ...) {
@@ -94,7 +95,8 @@ shinyUI(fluidPage(
   mainPanel("Datos extraídos del INE",
             p(textOutput('varSel')),
             #h1('A continuación se muestran los datos.'),
-            tableOutput('grafico')
+            plotOutput('grafico'),
+            tableOutput('datos')
             #textOutput('prueba')
   )#main_Panel
   

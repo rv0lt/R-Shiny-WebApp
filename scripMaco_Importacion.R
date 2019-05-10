@@ -1,6 +1,7 @@
 library(pxR)
 library(shiny)
 library(dplyr)
+library(ggplot2)
 #Con el simbolo %>% se puede escribir en una linea los comados que realizan la lectura del PC-Axis
 # y la transformacion a datos que entienda R
 
@@ -25,7 +26,12 @@ View(data_3)
 View(data_4)
 View(data_5)
 
-query = filter(data_1, data_1$Componentes.del.coste =="Coste laboral total" 
-               & data_1$Sectores.de.actividad.CNAE.2009=="Servicios" & 
-                 (data_1$Comunidades.y.Ciudades.Autónomas=="Total Nacional" ))
+query = select(data_1, Componentes.del.coste, Sectores.de.actividad.CNAE.2009, 
+                 Comunidades.y.Ciudades.Autónomas)
 View(query)
+aux = select(query, Periodo, value)
+View(aux)
+ggplot(data=df, aes(x=Tratamiento, y=Plantas)) + 
+  geom_bar(stat="identity", position="stack") # position=position.stack se puede abreviar con position="stack".
+ggplot(data=aux, aes(x=Periodo, y=value)) +
+  geom_bar(stat="identity", position="stack")
