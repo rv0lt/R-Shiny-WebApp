@@ -31,10 +31,5 @@ query = filter(data_1, Componentes.del.coste=="Coste laboral total", Sectores.de
 View(query)
 aux = select(query, Periodo, value, Comunidades.y.Ciudades.Autónomas)
 View(aux)
-ggplot(data=df, aes(x=Tratamiento, y=Plantas)) + 
-  geom_bar(stat="identity", position="stack") # position=position.stack se puede abreviar con position="stack".
-ggplot(data=aux, aes(x=value, y=Periodo ,colour=Comunidades.y.Ciudades.Autónomas )) +
-  geom_dotplot()
-  #facet_grid(~ Periodo)
-  #geom_bar(stat="identity", position="stack")
+
 ggplot(aux, aes(x =Periodo , y = value, group=1 ,colour=Comunidades.y.Ciudades.Autónomas )) + geom_line() + facet_grid(Comunidades.y.Ciudades.Autónomas ~ .)
