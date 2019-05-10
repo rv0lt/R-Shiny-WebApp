@@ -1,7 +1,8 @@
 library(pxR)
-library(shiny)
-library(dplyr)
-library(ggplot2)
+#library(dplyr)
+#library(ggplot2)
+library(OpenStreetMap)
+
 #Con el simbolo %>% se puede escribir en una linea los comados que realizan la lectura del PC-Axis
 # y la transformacion a datos que entienda R
 
@@ -26,10 +27,37 @@ View(data_3)
 View(data_4)
 View(data_5)
 
-query = filter(data_1, Componentes.del.coste=="Coste laboral total", Sectores.de.actividad.CNAE.2009=="Servicios" 
-                 )
-View(query)
-aux = select(query, Periodo, value, Comunidades.y.Ciudades.Autónomas)
-View(aux)
+#query = filter(data_1, Componentes.del.coste=="Coste laboral total", Sectores.de.actividad.CNAE.2009=="Servicios" )
+#View(query)
+#aux = select(query, Periodo, value, Comunidades.y.Ciudades.Autónomas)
+#View(aux)
+#ggplot(aux, aes(x =Periodo , y = value, group=1, colour=Comunidades.y.Ciudades.Autónomas )) + geom_line() + facet_grid(Comunidades.y.Ciudades.Autónomas ~ .)
 
-ggplot(aux, aes(x =Periodo , y = value, group=1 ,colour=Comunidades.y.Ciudades.Autónomas )) + geom_line() + facet_grid(Comunidades.y.Ciudades.Autónomas ~ .)
+
+
+
+
+# ubico mi alma mater
+unizar <- geocode('Universidad de Zaragoza, Zaragoza, España', source = "osm")
+
+# obtengo un mapa
+map.unizar <- get_map( location =c(lon = -4.0000000, lat= 40.0000000),
+                       color = "color",
+                       maptype = "roadmap",
+                       scale = 2,
+                       zoom = "auto",
+                       source="osm")
+
+  
+
+
+# lo represento
+ggmap(map.unizar) 
+
+# le añado puntos
+ggmap(map.unizar) + geom_point(aes(x = lon, y = lat),
+                               data = unizar, colour = 'red',
+                               size = 4)
+
+
+

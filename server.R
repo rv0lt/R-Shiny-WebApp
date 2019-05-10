@@ -1,7 +1,7 @@
 library(pxR)
 library(shiny)
 library(dplyr)
-library(ggplot2)
+# library(ggplot2)
 data_1 <- read.px("http://www.ine.es/jaxiT3/files/t/es/px/6061.px?nocab=1") %>% as.data.frame()
 
 
@@ -45,7 +45,7 @@ shinyServer(
       output$grafico <- renderPlot({
         query <- Filtrar()
         
-        ggplot(query, aes(x =Periodo , y = value, group=1 ,colour=Comunidades.y.Ciudades.Autónomas )) + geom_line() + facet_grid(Comunidades.y.Ciudades.Autónomas ~ .)
+        ggplot(query, aes(x =Periodo , y = value, group=1, colour=Comunidades.y.Ciudades.Autónomas )) + geom_line() + facet_grid(Comunidades.y.Ciudades.Autónomas ~ .)
         
       })#Grafica
       output$datos <-  renderTable({ Filtrar() 
