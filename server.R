@@ -45,7 +45,7 @@ shinyServer(
       output$grafico <- renderPlot({
         query <- Filtrar()
         
-        barplot(select(query,Periodo))
+        ggplot(query, aes(x =Periodo , y = value, group=1 ,colour=Comunidades.y.Ciudades.Autónomas )) + geom_line() + facet_grid(Comunidades.y.Ciudades.Autónomas ~ .)
         
       })#Grafica
       output$datos <-  renderTable({ Filtrar() 
