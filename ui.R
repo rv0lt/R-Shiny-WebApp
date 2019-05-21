@@ -3,6 +3,11 @@ library(dplyr)
 library(pxR)
 library(ggplot2)
 # 
+library(RColorBrewer)
+#http://www.xavigimenez.net/blog/2012/09/visualizing-data-with-r/
+#https://gadm.org/download_country_v3.html
+library(sp)
+
 
 dateInput2 <- function(inputId, label, minview = "years", maxview = "decades", ...) {
   d <- shiny::dateInput(inputId, label, ...)
@@ -21,32 +26,63 @@ dateRangeInput2 <- function(inputId, label, minview = "years", maxview = "decade
 }
 # Define UI for the shiny application here
 shinyUI(fluidPage(
-  headerPanel("Coste (en euros) por trabajador, comunidad autónoma, sectores de actividad"),
+  headerPanel("Coste (en euros) por trabajador, comunidad autónoma y sectores de actividad"),
   sidebarPanel("Seleccione",
-               selectInput('Comunidades', 
-                           label = 'Comunidades autonómas que desea consultar (Puede seleccionar varias)', 
-                           choices = c("Total Nacional"="Total Nacional",
-                                       "Andalucía"="01 Andalucía",
-                                       "Aragon" = "02 Aragón",
-                                       "Asturias" = "03 Asturias, Principado de",
-                                       "Islas Baleares" = "04 Balears, Illes",
-                                       "Islas canarias" = "05 Canarias",
-                                       "Cantabria" = "06 Cantabria",
-                                       "Castilla y León" = "07 Castilla y León",
-                                       "Castilla La Mancha" = "08 Castilla - La Mancha",
-                                       "Cataluña" = "09 Cataluña",
-                                       "Valencia" = "10 Comunitat Valenciana",
-                                       "Extremadura" = "11 Extremadura",
-                                       "Galicia" = "12 Galicia",
-                                       "Madrid" = "13 Madrid, Comunidad de",
-                                       "Murcia" = "14 Murcia, Región de",
-                                       "Navarra" = "15 Navarra, Comunidad Foral de",
-                                       "País Vasco" = "16 País Vasco",
-                                       "La Rioja" = "17 Rioja, La"
-                           ),#choices
-                           selected = "Total Nacional",
-                           multiple = TRUE
-               ),#COMUNIDADES_SelectInput
+               radioButtons(
+                 'elecc', label='Eliga que desea visualizar', choices = c("Gráficas"= "gr", "Datos"= "dt", "Mapa de Calor" = "mc"),
+                 selected="gr"
+               ),#elección de Gráfica, Datos o mapa de calor
+               conditionalPanel(condition="input.elecc != 'mc'",
+                                selectInput('Comunidades', 
+                                            label = 'Comunidades autonómas que desea consultar (Puede seleccionar varias)', 
+                                            choices = c("Total Nacional"="Total Nacional",
+                                                        "Andalucía"="01 Andalucía",
+                                                        "Aragon" = "02 Aragón",
+                                                        "Asturias" = "03 Asturias, Principado de",
+                                                        "Islas Baleares" = "04 Balears, Illes",
+                                                        "Islas canarias" = "05 Canarias",
+                                                        "Cantabria" = "06 Cantabria",
+                                                        "Castilla y León" = "07 Castilla y León",
+                                                        "Castilla La Mancha" = "08 Castilla - La Mancha",
+                                                        "Cataluña" = "09 Cataluña",
+                                                        "Valencia" = "10 Comunitat Valenciana",
+                                                        "Extremadura" = "11 Extremadura",
+                                                        "Galicia" = "12 Galicia",
+                                                        "Madrid" = "13 Madrid, Comunidad de",
+                                                        "Murcia" = "14 Murcia, Región de",
+                                                        "Navarra" = "15 Navarra, Comunidad Foral de",
+                                                        "País Vasco" = "16 País Vasco",
+                                                        "La Rioja" = "17 Rioja, La"
+                                            ),#choices
+                                            selected = "Total Nacional",
+                                            multiple = TRUE
+                                ),#COMUNIDADES_SelectInput
+                                p("Selección del Periodo en el que quiere generar la gráfica. Las fechas están divididas en años y trimestres"),
+                                dateRangeInput2("año", "Año", 
+                                                startview = "year",
+                                                min = "2008-01-01", max = "2018-01-01",
+                                                minview = "years", maxview = "decades", 
+                                                format ="yyyy" , start = "2008-01-01",
+                                                
+                                                end ="2009-01-01"
+                                ),#AÑO_RangeInput
+                                selectInput('TC',
+                                            label = 'Trimeste Inicial',
+                                            choices = c("Primer Trimestre" ="T1",
+                                                        "Segundo Trimestre" = "T2",
+                                                        "Tercer Trimestre" ="T3",
+                                                        "Cuarto Trimestre" = "T4"
+                                            )#choices
+                                ),#TC_SelectInput
+                                selectInput('TF',
+                                            label = 'Trimeste Final',
+                                            choices = c("Primer Trimestre" ="T1",
+                                                        "Segundo Trimestre" = "T2",
+                                                        "Tercer Trimestre" ="T3",
+                                                        "Cuarto Trimestre" = "T4"
+                                            )#choices
+                                )#TF_SelectInput
+               ),#ConditionalPanel != mc
                selectInput('Sectores',
                            label = 'Sector que desea consultar',
                            choices = c("Industria" = "Industria",
@@ -66,41 +102,40 @@ shinyUI(fluidPage(
                                        "Subvenciones y bonificaciones de la S.Social" = "Subvenciones y bonificaciones de la S.Social"
                            )#choices
                ),#COMPONENTES_SelectInput
-               p("Selección del Periodo en el que quiere generar la gráfica. Las fechas están divididas en años y trimestres"),
-               dateRangeInput2("año", "Año", 
-                               startview = "year",
-                               min = "2008-01-01", max = "2018-01-01",
-                               minview = "years", maxview = "decades", 
-                               format ="yyyy" , start = "2008-01-01",
-                               end ="2009-01-01"
-               ),#AÑO_RangeInput
-               selectInput('TC',
-                           label = 'Trimeste Inicial',
-                           choices = c("Primer Trimestre" ="T1",
-                                       "Segundo Trimestre" = "T2",
-                                       "Tercer Trimestre" ="T3",
-                                       "Cuarto Trimestre" = "T4"
-                           )#choices
-               ),#TC_SelectInput
-               selectInput('TF',
-                           label = 'Trimeste Final',
-                           choices = c("Primer Trimestre" ="T1",
-                                       "Segundo Trimestre" = "T2",
-                                       "Tercer Trimestre" ="T3",
-                                       "Cuarto Trimestre" = "T4"
-                           )#choices
-               )#TF_SelectInput
+               
+               conditionalPanel(condition="input.elecc == 'mc'",
+                                dateInput2('añoMc', "Año que desea representar", 
+                                           startview = "year",
+                                           min = "2008-01-01", max = "2018-01-01",
+                                           minview = "years", maxview = "decades", 
+                                           format ="yyyy"),#dateInput
+                                
+                                selectInput('Tmc',
+                                            label = 'Trimeste',
+                                            choices = c("Primer Trimestre" ="T1",
+                                                        "Segundo Trimestre" = "T2",
+                                                        "Tercer Trimestre" ="T3",
+                                                        "Cuarto Trimestre" = "T4"
+                                            )#choices
+                                )#selectInput
+               )#conditionalPanel ==mc
+               
   ),#SidebarPanel
   
-  mainPanel("Datos extraídos del INE",
+  mainPanel(strong("Datos extraídos del INE"),
             p(textOutput('varSel')),
             #h1('A continuación se muestran los datos.'),
-            plotOutput('grafico'),
-            tableOutput('datos')
+            conditionalPanel(condition="input.elecc == 'gr'",
+                             plotOutput('grafico1'),
+                             plotOutput('grafico2') ),
+            conditionalPanel(condition="input.elecc == 'dt'",
+                             tableOutput('datos') ),
+            conditionalPanel(condition="input.elecc == 'mc'",
+                             plotOutput('mapita'))
             #textOutput('prueba')
   )#main_Panel
   
 )#Fluid_Page
-  
-  
+
+
 )
