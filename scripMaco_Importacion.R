@@ -1,7 +1,6 @@
 library(pxR)
 #library(dplyr)
 #library(ggplot2)
-library(OpenStreetMap)
 
 #Con el simbolo %>% se puede escribir en una linea los comados que realizan la lectura del PC-Axis
 # y la transformacion a datos que entienda R
@@ -36,28 +35,6 @@ View(data_5)
 
 
 
-
-# ubico mi alma mater
-unizar <- geocode('Universidad de Zaragoza, Zaragoza, España', source = "osm")
-
-# obtengo un mapa
-map.unizar <- get_map( location =c(lon = -4.0000000, lat= 40.0000000),
-                       color = "color",
-                       maptype = "roadmap",
-                       scale = 2,
-                       zoom = "auto",
-                       source="osm")
-
-  
-
-
-# lo represento
-ggmap(map.unizar) 
-
-# le añado puntos
-ggmap(map.unizar) + geom_point(aes(x = lon, y = lat),
-                               data = unizar, colour = 'red',
-                               size = 4)
 
 
 
