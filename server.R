@@ -53,33 +53,17 @@ shinyServer(
     
     #Variables seleccionadas
     output$varSel <- renderText({
+      if(input$elecc=="mc"){
+        paste("Visualización del mapa de calor del componente: ", input$Componentes, " en el sector:  ", input$Sectores, "y durante el año", 
+              paste(as.character(format(input$añoMc,format="%Y")),input$Tmc, sep=""))
+      }#if
+      else{
       paste("Visualización del componente: ", input$Componentes, " en el sector:  ", input$Sectores, "desde el ", Inicio(), "hasta el ", Fin(), 
             "Para la/s Comunidades Autónomas seleccionadas")
+      }#else
     })
     
-    ####MÉTODO QUE CREA EL MAPA DE MANERA REACTIVA#########
-    CrearMapa <- reactive({
-      query = filter(data_1, Componentes.del.coste==input$Componentes, Sectores.de.actividad.CNAE.2009==input$Sectores, Periodo==paste(as.character(format(input$añoMc,format="%Y")),input$Tmc, sep=""), Comunidades.y.Ciudades.Autónomas!="Total Nacional" )
-      aux = select(query,  value, Comunidades.y.Ciudades.Autónomas)
-      
-      colLevel <- vector(length = length(par))
-      for(i in 1:length(colLevel)){
-        l = par[[i]][2]
-        if(l!="Ceuta y Melilla"){
-          q = filter(aux, Comunidades.y.Ciudades.Autónomas==par[[i]][1])
-          q = select(q, value)
-          #z = (q %/% 10) +1
-          colLevel[i] = q
-        }#if
-      }
-      #y <- as.factor(unlist(colLevel))
-      y <- unlist(colLevel)
-      y[7] = y[6]
-      spain$mc =y
-      
-      #spplot(x, "cl", col.regions=paleta )
-      #spplot(x, "mc", col.regions=colores )
-    })#####FIN DE CREAR MAPA#######
+    
     
     ####MÉTODO QUE FILTRA DE MANERA REACTIVA#########
     Filtrar <- reactive ({
@@ -129,12 +113,30 @@ shinyServer(
     })#Volvado de los datos
     
     output$mapita <- renderPlot({
-      mapa = CrearMapa()
-      spplot(spain, "mc", col.regions=colores )
+      query = filter(data_1, Componentes.del.coste==input$Componentes, Sectores.de.actividad.CNAE.2009==input$Sectores, Periodo==paste(as.character(format(input$añoMc,format="%Y")),input$Tmc, sep=""), Comunidades.y.Ciudades.Autónomas!="Total Nacional" )
+      aux = select(query,  value, Comunidades.y.Ciudades.Autónomas)
+      
+      colLevel <- vector(length = length(par))
+      for(i in 1:length(colLevel)){
+        l = par[[i]][2]
+        if(l!="Ceuta y Melilla"){
+          q = filter(aux, Comunidades.y.Ciudades.Autónomas==par[[i]][1])
+          q = select(q, value)
+          #z = (q %/% 10) +1
+          colLevel[i] = q
+        }#if
+      }
+      #y <- as.factor(unlist(colLevel))
+      y <- unlist(colLevel)
+      y[7] = y[6]
+      spain@data$mc=y
+      spplot(spain, 'mc', col.regions=colores )
       
     })#representacion del mapa
     
-    
+    output$prueba <- renderText({
+    })
+      
     
     
   }

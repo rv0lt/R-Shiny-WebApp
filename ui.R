@@ -108,7 +108,7 @@ shinyUI(fluidPage(
                                            startview = "year",
                                            min = "2008-01-01", max = "2018-01-01",
                                            minview = "years", maxview = "decades", 
-                                           format ="yyyy"),#dateInput
+                                           format ="yyyy", value="2008-01-01" ),#dateInput
                                 
                                 selectInput('Tmc',
                                             label = 'Trimeste',
