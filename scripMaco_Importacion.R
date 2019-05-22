@@ -1,5 +1,6 @@
 library(pxR)
 library(sp)
+
 setwd("/home/arevuelta/Escritorio/yo/FI/3/macro/TrabajoMacro")
 
 #Con el simbolo %>% se puede escribir en una linea los comados que realizan la lectura del PC-Axis
@@ -28,11 +29,9 @@ View(data_5)
 
 
 #spain = readRDS("gadm36_ESP_1_sp.rds")
-con <- url("https://biogeo.ucdavis.edu/data/gadm3.6/Rsp/gadm36_ESP_1_sp.rds","rb")
 
-con <- gzfile("https://biogeo.ucdavis.edu/data/gadm3.6/Rsp/gadm36_ESP_1_sp.rds","rb")
-spain = readRDS(con)
-close(con)
+spain <- readRDS(gzcon(url("https://biogeo.ucdavis.edu/data/gadm3.6/Rsp/gadm36_ESP_1_sp.rds")))
+
 
 par <- list(
   c("01 Andalucía","Andalucía"),
@@ -56,10 +55,16 @@ par <- list(
 )
 
 paleta <- brewer.pal(9, "Reds")[1:9]
+colores2
 colores <- c('#F4F1A2','#F4F1A2','#E6EAA2','#E6EAA2',
              '#CFE3A2','#CFE3A2','#9AD0A3','#9AD0A3',
              '#7FC9A4','#7FC9A4','#32B9A3','#32B9A3',
              '#00A7A2','#00667E','#00667E','#1D4F73')
+
+colores2 <- c('#FFF5F0','#FFF5F0','#FEE0D2','#FEE0D2',
+              '#FCBBA1','#FCBBA1','#FC9272','#FC9272',
+              '#FB6A4A','#FB6A4A','#EF3B2C','#EF3B2C',
+              '#CB181D','#A50F15','#A50F15','#67000D') 
 
 query = filter(data_1, Componentes.del.coste=="Coste laboral total", Sectores.de.actividad.CNAE.2009=="Servicios", Periodo=="2010T2", Comunidades.y.Ciudades.Autónomas!="Total Nacional" )
 View(query)
@@ -79,8 +84,11 @@ for(i in 1:length(colLevel)){
 y <- unlist(colLevel)
 y[7] = y[6]
 spain@data$mc=y
+spplot(spain, 'mc', col.regions=colores2 )
 spplot(spain, 'mc', col.regions=colores )
+grid.arrange(spplot(spain, 'mc', col.regions=colores2 ), spplot(spain, 'mc', col.regions=colores )
 
+)
 
 
 

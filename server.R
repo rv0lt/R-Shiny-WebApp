@@ -38,6 +38,10 @@ colores <- c('#F4F1A2','#F4F1A2','#E6EAA2','#E6EAA2',
              '#7FC9A4','#7FC9A4','#32B9A3','#32B9A3',
              '#00A7A2','#00667E','#00667E','#1D4F73')
 
+colores2 <- c('#FFF5F0','#FFF5F0','#FEE0D2','#FEE0D2',
+              '#FCBBA1','#FCBBA1','#FC9272','#FC9272',
+              '#FB6A4A','#FB6A4A','#EF3B2C','#EF3B2C',
+              '#CB181D','#A50F15','#A50F15','#67000D') 
 
 
 
@@ -55,7 +59,7 @@ shinyServer(
     output$varSel <- renderText({
       if(input$elecc=="mc"){
         paste("Visualización del mapa de calor del componente: ", input$Componentes, " en el sector:  ", input$Sectores, "y durante el año", 
-              paste(as.character(format(input$añoMc,format="%Y")),input$Tmc, sep=""))
+              paste(as.character(format(input$añoMc,format="%Y")),input$Tmc, sep=" "))
       }#if
       else{
       paste("Visualización del componente: ", input$Componentes, " en el sector:  ", input$Sectores, "desde el ", Inicio(), "hasta el ", Fin(), 
@@ -130,7 +134,7 @@ shinyServer(
       y <- unlist(colLevel)
       y[7] = y[6]
       spain@data$mc=y
-      spplot(spain, 'mc', col.regions=colores )
+      spplot(spain, 'mc', col.regions=colores2 )
       
     })#representacion del mapa
     
