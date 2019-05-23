@@ -13,19 +13,19 @@ data_1 <- read.px("http://www.ine.es/jaxiT3/files/t/es/px/6061.px?nocab=1") %>% 
 data_2 <- read.px("http://www.ine.es/jaxiT3/files/t/es/px/6062.px?nocab=1") %>% as.data.frame()
 
 #Tiempo de trabajo por trabajador y mes por comunidad aut?noma, tipo de jornada, sectores de actividad
-data_3 <- read.px("http://www.ine.es/jaxiT3/files/t/es/px/6063.px?nocab=1") %>% as.data.frame()
+#data_5 <- read.px("http://www.ine.es/jaxiT3/files/t/es/px/6063.px?nocab=1") %>% as.data.frame()
 
 #N?mero de vacantes comunidad aut?noma
-data_4 <- read.px("http://www.ine.es/jaxiT3/files/t/es/px/6064.px?nocab=1") %>% as.data.frame()
+data_3 <- read.px("http://www.ine.es/jaxiT3/files/t/es/px/6064.px?nocab=1") %>% as.data.frame()
 
 #Motivos por los que no existen vacantes por comunidad aut?noma
-data_5 <- read.px("http://www.ine.es/jaxiT3/files/t/es/px/6066.px?nocab=1") %>% as.data.frame()
+data_4 <- read.px("http://www.ine.es/jaxiT3/files/t/es/px/6066.px?nocab=1") %>% as.data.frame()
 
 View(data_1)
 View(data_2)
+#View(data_5)
 View(data_3)
 View(data_4)
-View(data_5)
 
 
 #spain = readRDS("gadm36_ESP_1_sp.rds")
@@ -66,7 +66,10 @@ colores2 <- c('#FFF5F0','#FFF5F0','#FEE0D2','#FEE0D2',
               '#FB6A4A','#FB6A4A','#EF3B2C','#EF3B2C',
               '#CB181D','#A50F15','#A50F15','#67000D') 
 
-query = filter(data_1, Componentes.del.coste=="Coste laboral total", Sectores.de.actividad.CNAE.2009=="Servicios", Periodo=="2010T2", Comunidades.y.Ciudades.Autónomas!="Total Nacional" )
+
+
+
+query = filter(data_5, Periodo=="2018T2", data_5$Comunidad.autónoma=="Total Nacional")
 View(query)
 aux = select(query,  value, Comunidades.y.Ciudades.Autónomas)
 
