@@ -3,6 +3,7 @@ library(shiny)
 library(dplyr)
 library(RColorBrewer)
 library(ggplot2)
+library(readr)
 #http://www.xavigimenez.net/blog/2012/09/visualizing-data-with-r/
 #https://gadm.org/download_country_v3.html
 
@@ -23,6 +24,7 @@ data_4 <- read.px("http://www.ine.es/jaxiT3/files/t/es/px/6066.px?nocab=1", enco
 
 #spain = readRDS("gadm36_ESP_1_sp.rds")
 spain <- readRDS(gzcon(url("https://biogeo.ucdavis.edu/data/gadm3.6/Rsp/gadm36_ESP_1_sp.rds")))
+
 
 
 par <- list(
@@ -74,8 +76,9 @@ coloresVerdes <- c("#F7FCF5","#F7FCF5","#E5F5E0","#E5F5E0",
 shinyServer(
   
   function(input, output) {
-
-    ######VARIABLES SELECCIONADAS########
+    
+    ###############################################################################################################
+    ###################CREACION DEL TEXTO QUE MUESTRA LAS VARIABLES SELECCIONADAS POR EL USUARIO###################
     output$varSel_1 <- renderText({
       if(input$elecc_1=="mc"){
         paste("Visualización del mapa de calor del componente: ", input$Componentes_1, " en el sector:  ", input$Sectores_1, "y durante el año", 
@@ -116,8 +119,8 @@ shinyServer(
     })#VarSel_4
     
     
-    
-    ####MÉTODOS QUE FILTRAN DE MANERA REACTIVA#########
+    #####################################################################
+    ###################METODOS AUXILIARES PARA FILTRAR###################
     Filtrar_1 <- reactive ({
       
       #busqueda contiene un dataFrame con todos los datos filtrados excepto el Periodo
@@ -205,7 +208,6 @@ shinyServer(
       aux = select(aux, Periodo, Comunidad.autónoma, value) %>% arrange(Periodo)
       aux
     })#Filtrar_4
-    #####FIN DE LOS METODOS DE FILTRAR#######
     
     
     
@@ -241,7 +243,8 @@ shinyServer(
     Fin_4 <- reactive({
       paste(as.character(format(input$año_4[2],format="%Y")),input$TF_4, sep="")
     })
-    
+    #######################################################################################
+    ###################CREACION GRAFICOS Y VOLCADO DE LOS DATOS EN BRUTO###################    
     output$grafico1_1 <- renderPlot({
       query = Filtrar_1()
       ggplot(query, aes(x =Periodo , y = value, group=1, colour=Comunidades.y.Ciudades.Autónomas )) + geom_line() + facet_grid(Comunidades.y.Ciudades.Autónomas ~ .)
@@ -285,7 +288,8 @@ shinyServer(
     output$datos_4 <-  renderTable({ Filtrar_4() 
     })#Volvado de los datos
     
-  
+    #######################################################
+    ###################VISUALIZACIÓN MAPAS###################  
       
     output$mapita_1 <- renderPlot({
       query = filter(data_1, Componentes.del.coste==input$Componentes_1, Sectores.de.actividad.CNAE.2009==input$Sectores_1, Periodo==paste(as.character(format(input$añoMc_1,format="%Y")),input$Tmc_1, sep=""), Comunidades.y.Ciudades.Autónomas!="Total Nacional" )
@@ -364,7 +368,59 @@ shinyServer(
       spain@data$mc=y
       spplot(spain, 'mc', col.regions=coloresRojos )
       
-    })#representacion del mapa_2
+    })#representacion del mapa_4
+
+    #######################################################
+    ###################DESCARGA DE DATOS###################
+    output$downloadCSV_1 <- downloadHandler(
+      filename = "coste_laboral_por_trabajador_comunidad_autonoma_sectores_de_actividad.csv",
+      content = function(file) {
+        write.csv(data_1, file, row.names = FALSE)
+      }
+    )
+    output$downloadRdata_1 <- downloadHandler(
+      filename = "coste_laboral_por_trabajador_comunidad_autonoma_sectores_de_actividad.rds",
+      content = function(file) {
+        write_rds(data_1,file)
+      }
+    )
+    output$downloadCSV_2 <- downloadHandler(
+      filename = "coste_laboral_por_hora_efectiva_comunidad_autonoma_sectores_de_actividad.csv",
+      content = function(file) {
+        write.csv(data_2, file, row.names = FALSE)
+      }
+    )
+    output$downloadRdata_2 <- downloadHandler(
+      filename = "coste_laboral_por_hora_efectiva_comunidad_autonoma_sectores_de_actividad.rds",
+      content = function(file) {
+        write_rds(data_2,file)
+      }
+    )
+    output$downloadCSV_3 <- downloadHandler(
+      filename = "numero_de_vacantes_comunidad_autonoma.csv",
+      content = function(file) {
+        write.csv(data_3, file, row.names = FALSE)
+      }
+    )
+    output$downloadRdata_3 <- downloadHandler(
+      filename = "numero_de_vacantes_comunidad_autonoma.rds",
+      content = function(file) {
+        write_rds(data_3,file)
+      }
+    )
+    output$downloadCSV_4 <- downloadHandler(
+      filename = "motivos_por_los_que_no_existen_vacantes_por_comunidad_autonoma.csv",
+      content = function(file) {
+        write.csv(data_4, file, row.names = FALSE)
+      }
+    )
+    output$downloadRdata_4 <- downloadHandler(
+      filename = "motivos_por_los_que_no_existen_vacantes_por_comunidad_autonoma.rds",
+      content = function(file) {
+        write_rds(data_4,file)
+      }
+    )
+  
 
   }#function(input,output)
 )#ShinyServer
