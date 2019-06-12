@@ -1,0 +1,55 @@
+%pruebas menor
+
+?- menor(3,5,<,M).
+
+M = 3 ? 
+
+yes
+
+?- menor(5,3,<,M).
+
+M = 3 ? 
+
+yes
+
+?- menor(5,3,>,M).
+
+M = 5 ? 
+
+yes
+
+?- menor(5,3,>,3).
+
+no
+
+?- menor(5,3,>,5).
+
+yes
+
+?- menor(5,3,>=,4).
+
+no
+
+
+?- menor(5,5,=,M).
+
+M = 5 ? 
+
+yes
+
+?- menor(5,5,=,M).
+
+M = 5 ? ;
+
+no
+
+?- menor(5,4,=<,M).
+
+M = 4 ? 
+
+yes
+
+?- menor(5,4,=<,4).
+
+yes
+
