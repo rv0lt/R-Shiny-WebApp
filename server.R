@@ -1,7 +1,6 @@
 library(pxR)
 library(shiny)
 library(dplyr)
-library(RColorBrewer)
 library(ggplot2)
 library(readr)
 #http://www.xavigimenez.net/blog/2012/09/visualizing-data-with-r/
@@ -11,11 +10,10 @@ library(sp)
 #Coste laboral por trabajador, comunidad aut?noma, sectores de actividad
 data_1 <- read.px("http://www.ine.es/jaxiT3/files/t/es/px/6061.px?nocab=1", encoding = "latin1") %>% as.data.frame()
 
-
 #Coste laboral por hora efectiva, comunidad aut?noma, sectores de actividad
 data_2 <- read.px("http://www.ine.es/jaxiT3/files/t/es/px/6062.px?nocab=1", encoding = "latin1") %>% as.data.frame()
 
-#N?mero de vacantes comunidad aut?noma
+#Nmero de vacantes comunidad aut?noma
 data_3 <- read.px("http://www.ine.es/jaxiT3/files/t/es/px/6064.px?nocab=1", encoding = "latin1") %>% as.data.frame()
 
 #Motivos por los que no existen vacantes por comunidad aut?noma
@@ -48,29 +46,11 @@ par <- list(
   c("14 Murcia, Región de", "Región de Murcia")
 )
 
-paleta <- brewer.pal(9, "Reds")[1:9]
-coloresAzules <- c('#F4F1A2','#F4F1A2','#E6EAA2','#E6EAA2',
-             '#CFE3A2','#CFE3A2','#9AD0A3','#9AD0A3',
-             '#7FC9A4','#7FC9A4','#32B9A3','#32B9A3',
-             '#00A7A2','#00667E','#00667E','#1D4F73')
 
 coloresRojos <- c('#FFF5F0','#FFF5F0','#FEE0D2','#FEE0D2',
               '#FCBBA1','#FCBBA1','#FC9272','#FC9272',
               '#FB6A4A','#FB6A4A','#EF3B2C','#EF3B2C',
               '#CB181D','#A50F15','#A50F15','#67000D') 
-
-coloresVerdes <- c("#F7FCF5","#F7FCF5","#E5F5E0","#E5F5E0",
-                   "#C7E9C0","#C7E9C0","#A1D99B","#A1D99B",
-                   "#74C476","#74C476","#41AB5D","#41AB5D",
-                   "#238B45","#006D2C","#006D2C","#00441B") 
-
-         
-
-
-
-
-
-
 
 
 shinyServer(
@@ -216,6 +196,7 @@ shinyServer(
       
       paste(as.character(format(input$año_1[1],format="%Y")),input$TC_1, sep="")
     })
+
     Inicio_2 <- reactive({
       
       paste(as.character(format(input$año_2[1],format="%Y")),input$TC_2, sep="")
@@ -233,7 +214,7 @@ shinyServer(
     #Une el año y trimestre final seleccionado
     Fin_1 <- reactive({
       paste(as.character(format(input$año_1[2],format="%Y")),input$TF_1, sep="")
-    })
+    })   
     Fin_2 <- reactive({
       paste(as.character(format(input$año_2[2],format="%Y")),input$TF_2, sep="")
     })
@@ -249,6 +230,7 @@ shinyServer(
       query = Filtrar_1()
       ggplot(query, aes(x =Periodo , y = value, group=1, colour=Comunidades.y.Ciudades.Autónomas )) + geom_line() + facet_grid(Comunidades.y.Ciudades.Autónomas ~ .)
     })#Grafica1_1
+
     output$grafico1_2 <- renderPlot({
       query = Filtrar_2()
       ggplot(query, aes(x =Periodo , y = value, group=1, colour=Comunidades.y.Ciudades.Autónomas )) + geom_line() + facet_grid(Comunidades.y.Ciudades.Autónomas ~ .)
@@ -292,21 +274,21 @@ shinyServer(
     ###################VISUALIZACIÓN MAPAS###################  
       
     output$mapita_1 <- renderPlot({
-      query = filter(data_1, Componentes.del.coste==input$Componentes_1, Sectores.de.actividad.CNAE.2009==input$Sectores_1, Periodo==paste(as.character(format(input$añoMc_1,format="%Y")),input$Tmc_1, sep=""), Comunidades.y.Ciudades.Autónomas!="Total Nacional" )
+      query = filter(data_1, Componentes.del.coste==input$Componentes_1, Sectores.de.actividad.CNAE.2009==input$Sectores_1, 
+                     Periodo==paste(as.character(format(input$añoMc_1,format="%Y")),input$Tmc_1, sep=""),Comunidades.y.Ciudades.Autónomas!="Total Nacional" )
       aux = select(query,  value, Comunidades.y.Ciudades.Autónomas)
       
       colLevel <- vector(length = length(par))
       for(i in 1:length(colLevel)){
-        l = par[[i]][2]
-        if(l!="Ceuta y Melilla"){
+        if(i!=7){
           q = filter(aux, Comunidades.y.Ciudades.Autónomas==par[[i]][1])
           q = select(q, value)
           colLevel[i] = q
         }#if
       }
-      y <- unlist(colLevel)
-      y[7] = y[6]
-      spain@data$mc=y
+      valores <- unlist(colLevel)
+      valores[7] = valores[6]
+      spain@data$mc=valores
       spplot(spain, 'mc', col.regions=coloresRojos )
       
     })#representacion del mapa_1

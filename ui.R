@@ -3,8 +3,7 @@ library(shiny)
 library(dplyr)
 library(pxR)
 library(ggplot2)
-# 
-library(RColorBrewer)
+#links de interes
 #http://www.xavigimenez.net/blog/2012/09/visualizing-data-with-r/
 #https://gadm.org/download_country_v3.html
 library(sp)
@@ -145,7 +144,7 @@ shinyUI(fluidPage(
                        sidebarPanel("Seleccione",
                                     radioButtons(
                                       'elecc_2', label='Eliga que desea visualizar', choices = c("Gráficas"= "gr", "Datos"= "dt", 
-                                                                                                 "Mapa de Calor" = "mc", "Descarga de datos" ="descarga"),
+                                                                                                 "Mapa de Calor" = "mc"),
                                       selected="gr"
                                     ),#elección de Gráfica, Datos o mapa de calor
                                     conditionalPanel(condition="input.elecc_2 != 'mc'",
@@ -255,7 +254,7 @@ shinyUI(fluidPage(
                        sidebarPanel("Seleccione",
                                     radioButtons(
                                       'elecc_3', label='Eliga que desea visualizar', choices = c("Gráficas"= "gr", "Datos"= "dt", 
-                                                                                                 "Mapa de Calor" = "mc", "Descarga de datos" ="descarga"),
+                                                                                                 "Mapa de Calor" = "mc"),
                                       selected="gr"
                                     ),#elección de Gráfica, Datos o mapa de calor
                                     conditionalPanel(condition="input.elecc_3 != 'mc'",
@@ -347,7 +346,7 @@ shinyUI(fluidPage(
                        sidebarPanel("Seleccione",
                                     radioButtons(
                                       'elecc_4', label='Eliga que desea visualizar', choices = c("Gráficas"= "gr", "Datos"= "dt", 
-                                                                                                 "Mapa de Calor" = "mc", "Descarga de datos" = "descarga"),
+                                                                                                 "Mapa de Calor" = "mc"),
                                       selected="gr"
                                     ),#elección de Gráfica, Datos o mapa de calor
                                     conditionalPanel(condition="input.elecc_4 != 'mc'",
