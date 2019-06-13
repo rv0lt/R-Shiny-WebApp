@@ -120,7 +120,7 @@ shinyServer(
         aux2 = slice(busqueda, vectorPosFin[i]:vectorPosInicio[i] )
         aux = full_join(aux, aux2)
       }#for
-      aux = select(aux, Periodo, Comunidades.y.Ciudades.Autónomas, value) %>% arrange(Periodo)
+      aux = select(aux, Periodo, Comunidades.y.Ciudades.Autónomas, value) %>% arrange(desc(Periodo))
       aux
     })#Filtrar1
     
